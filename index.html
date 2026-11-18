@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phathu Journal - 100% Free</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0a0a0a;color:#fff;padding:14px;padding-bottom:40px}
+.top{background:linear-gradient(135deg,#ffcc00,#ff6600);color:#000;padding:26px 16px;border-radius:18px;text-align:center}
+.top h1{font-size:34px;letter-spacing:1px}
+.top .free{background:#000;color:#ffcc00;display:inline-block;padding:8px 16px;border-radius:20px;font-size:12px;margin-top:12px;font-weight:bold}
+.top p{font-size:14px;margin-top:12px;line-height:1.6}
+.card{background:#161616;border:1px solid #333;padding:16px;border-radius:14px;margin-top:14px;display:none}
+.card.active{display:block}
+.card h2{color:#ffcc00;font-size:18px;margin-bottom:6px}
+.card p{font-size:14px;color:#ddd;line-height:1.6}
+input,textarea,select{width:100%;padding:13px;background:#000;color:#fff;border:1px solid #444;border-radius:10px;margin-top:10px;font-size:14px;outline:none}
+textarea{height:150px;resize:vertical}
+button{width:100%;padding:14px;background:#ffcc00;color:#000;border:none;border-radius:12px;font-weight:bold;margin-top:12px;font-size:15px;cursor:pointer}
+button:active{opacity:0.8}
+button.outline{background:transparent;color:#ffcc00;border:1px solid #ffcc00}
+button.danger{background:#ff3333;color:#fff}
+button.smallBtn{padding:8px;font-size:13px;margin-top:8px}
+.entry{background:#222;padding:12px;border-radius:10px;margin-top:10px;border-left:4px solid #ffcc00}
+.entry b{font-size:14px}
+.entry p{font-size:13px;white-space:pre-wrap;margin-top:4px}
+.lock{font-size:42px;text-align:center;margin:10px 0}
+.small{font-size:12px;color:#999;text-align:center;margin-top:10px;line-height:1.5}
+.hide{display:none}
+.badge{background:#222;color:#ffcc00;padding:5px 10px;border-radius:20px;font-size:11px}
+.searchBox{margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+<h1>PHATHU JOURNAL</h1>
+<span class="free">100% FREE • NO PAYMENT • JUST FOR YOU</span>
+<p>Your mind is private. Your journal is locked.<br>Only you can open it.</p>
+</div>
+
+<!-- AUTH -->
+<div id="authCard" class="card active">
+<h2 id="authTitle">Create Your Free Account</h2>
+<p>So your journals can be saved for you only.</p>
+<input type="text" id="name" placeholder="Your Name e.g. Phathu">
+<input type="text" id="username" placeholder="Choose Username e.g. phathu123">
+<input type="password" id="password" placeholder="Create Lock Password - Remember it!">
+<input type="password" id="password2" placeholder="Confirm Password">
+<button id="mainBtn" onclick="handleAuth()">CREATE MY FREE JOURNAL →</button>
+<button class="outline" onclick="toggleAuth()" id="toggleBtn">Already have a journal? Login Here</button>
+<p class="small">Your journal is saved on YOUR phone only. No one else can see it. No payment. No data taken.</p>
+</div>
+
+<!-- LOCK -->
+<div id="lockCard" class="card">
+<div class="lock">🔒</div>
+<h2 style="text-align:center">Journal Locked</h2>
+<p style="text-align:center">Welcome back <b id="welcomeName"></b>. Enter your password to open your journal.</p>
+<input type="password" id="unlockPass" placeholder="Enter your lock password">
+<button onclick="unlock()">UNLOCK MY JOURNAL 🔓</button>
+<button class="outline" onclick="logout()">Use Different Account</button>
+<p id="lockError" style="color:#ff5555;text-align:center;font-size:13px;margin-top:8px"></p>
+</div>
+
+<!-- APP -->
+<div id="appCard" class="card">
+<h2>Welcome, <span id="userName"></span> <span class="badge">FREE MEMBER</span></h2>
+<p>Write what you were thinking. So tomorrow you don't forget where your mind was.</p>
+
+<select id="mood">
+<option value="🔥 Set to achieve">🔥 Mood: Set to achieve</option>
+<option value="😔 System is heavy">😔 Mood: System is heavy</option>
+<option value="🙏 Peaceful">🙏 Mood: Peaceful</option>
+<option value="💡 New Idea">💡 Mood: New Idea</option>
+<option value="📚 Studying">📚 Mood: Studying</option>
+<option value="😴 Tired">😴 Mood: Tired</option>
+<option value="❤️ Grateful">❤️ Mood: Grateful</option>
+<option value="😡 Angry / Frustrated">😡 Mood: Angry / Frustrated</option>
+</select>
+
+<input type="text" id="title" placeholder="Title: e.g. Where my mind was today...">
+<textarea id="content" placeholder="Write your journal here...
+
+What happened today?
+What did you learn?
+What will you do tomorrow?
+Don't forget your idea..."></textarea>
+
+<button onclick="saveEntry()">SAVE & LOCK ENTRY 🔒</button>
+<button class="outline" onclick="lockJournal()">LOCK JOURNAL NOW 🔒</button>
+
+<input type="text" id="search" class="searchBox" placeholder="🔍 Search my entries..." oninput="loadEntries()">
+
+<h2 style="margin-top:20px">📓 My Locked Entries - <span id="count">0</span></h2>
+<div id="entries"></div>
+<p id="noEntries" class="small">No entries yet. Your first entry is your first step.</p>
+<button class="danger" onclick="deleteAll()">Delete All My Entries</button>
+</div>
+
+<!-- WHY JOURNAL -->
+<div class="card active">
+<h2>Why Having A Journal Is Important</h2>
+<p>Your mind forgets. Your journal doesn't.<br><br>
+<b>1. You never lose your ideas.</b> The idea you have at night can change your life in the morning - if you wrote it down.<br><br>
+<b>2. You see how far you've come.</b> When life feels heavy, you can read back and see: I survived that day too. I am stronger than I thought.<br><br>
+<b>3. You think clearly.</b> When you write, your head becomes quiet. You stop overthinking. You know what to do next.<br><br>
+<b>4. You heal in private.</b> Some things you can't tell anyone. You can tell your journal. No judgment. No gossip. Just you.<br><br>
+<b>5. You stay set on your goal.</b> If you write your goal every day, you will not forget it. And if a person is set to achieve something, they will.</p>
+<p style="margin-top:12px;color:#ffcc00"><b>Your journal is your memory. Your memory is your power.</b></p>
+<p class="small">Phathu Journal © 2026 • 100% Free • Your Mind Is Private</p>
+</div>
+
+<script>
+let mode = 'signup';
+let currentUser = null;
+
+function getUsers(){ return JSON.parse(localStorage.getItem('phathu_users') || '{}'); }
+function saveUsers(u){ localStorage.setItem('phathu_users', JSON.stringify(u)); }
+
+function toggleAuth(){
+  if(mode === 'signup'){
+    mode = 'login';
+    document.getElementById('authTitle').innerText = 'Login To Your Locked Journal';
+    document.getElementById('name').style.display = 'none';
+    document.getElementById('password2').classList.add('hide');
+    document.getElementById('mainBtn').innerText = 'UNLOCK MY JOURNAL →';
+    document.getElementById('toggleBtn').innerText = 'No journal yet? Create Free Account';
+  } else {
+    mode = 'signup';
+    document.getElementById('authTitle').innerText = 'Create Your Free Account';
+    document.getElementById('name').style.display = 'block';
+    document.getElementById('password2').classList.remove('hide');
+    document.getElementById('mainBtn').innerText = 'CREATE MY FREE JOURNAL →';
+    document.getElementById('toggleBtn').innerText = 'Already have a journal? Login Here';
+  }
+}
+
+function handleAuth(){
+  let name = document.getElementById('name').value.trim();
+  let user = document.getElementById('username').value.trim().toLowerCase();
+  let pass = document.getElementById('password').value;
+  let pass2 = document.getElementById('password2').value;
+  if(!user || !pass){ alert('Please fill username and password'); return; }
+  if(mode === 'signup'){
+    if(!name){ alert('Please enter your name'); return; }
+    if(pass !== pass2){ alert('Passwords do not match'); return; }
+    if(pass.length < 4){ alert('Password must be at least 4 characters'); return; }
+    let users = getUsers();
+    if(users[user]){ alert('Username already taken. Try another one or Login.'); return; }
+    users[user] = { name: name, pass: pass, entries: [] };
+    saveUsers(users);
+    alert('Welcome ' + name + '! Your FREE locked journal is created.');
+    openApp(user);
+  } else {
+    let users = getUsers();
+    if(!users[user] || users[user].pass !== pass){ alert('Wrong username or password. Your journal is locked for your safety.'); return; }
+    openApp(user);
+  }
+}
+
+function openApp(user){
+  currentUser = user;
+  let users = getUsers();
+  document.getElementById('authCard').classList.remove('active');
+  document.getElementById('lockCard').classList.remove('active');
+  document.getElementById('appCard').classList.add('active');
+  document.getElementById('userName').innerText = users[user].name;
+  loadEntries();
+}
+
+function lockJournal(){
+  document.getElementById('appCard').classList.remove('active');
+  document.getElementById('lockCard').classList.add('active');
+  let users = getUsers();
+  document.getElementById('welcomeName').innerText = users[currentUser].name;
+  document.getElementById('unlockPass').value = '';
+}
+
+function unlock(){
+  let users = getUsers();
+  let p = document.getElementById('unlockPass').value;
+  if(users[currentUser].pass === p){
+    document.getElementById('lockError').innerText = '';
+    openApp(currentUser);
+  } else {
+    document.getElementById('lockError').innerText = 'Wrong password. Journal stays locked.';
+  }
+}
+
+function logout(){
+  currentUser = null;
+  document.getElementById('lockCard').classList.remove('active');
+  document.getElementById('appCard').classList.remove('active');
+  document.getElementById('authCard').classList.add('active');
+}
+
+function saveEntry(){
+  let title = document.getElementById('title').value.trim();
+  let content = document.getElementById('content').value.trim();
+  let mood = document.getElementById('mood').value;
+  if(!title || !content){ alert('Write title and journal first'); return; }
+  let users = getUsers();
+  let date = new Date().toLocaleString();
+  users[currentUser].entries.unshift({ title, content, mood, date });
+  saveUsers(users);
+  document.getElementById('title').value = '';
+  document.getElementById('content').value = '';
+  loadEntries();
+  alert('Saved & Locked 🔒');
+}
+
+function loadEntries(){
+  let users = getUsers();
+  let all = users[currentUser].entries || [];
+  let q = document.getElementById('search').value.toLowerCase();
+  let list = all.filter(e => (e.title + ' ' + e.content + ' ' + e.mood).toLowerCase().includes(q));
+  document.getElementById('count').innerText = all.length;
+  let box = document.getElementById('entries');
+  box.innerHTML = '';
+  document.getElementById('noEntries').style.display = list.length ? 'none' : 'block';
+  list.forEach((e) => {
+    let realIndex = all.indexOf(e);
+    let d = document.createElement('div');
+    d.className = 'entry';
+    d.innerHTML = '<b>' + e.mood + ' • ' + e.title + '</b><p style="color:#999;font-size:11px">' + e.date + '</p><p>' + e.content + '</p><button class="danger smallBtn" onclick="delEntry(' + realIndex + ')">Delete This Entry</button>';
+    box.appendChild(d);
+  });
+}
+
+function delEntry(i){
+  if(!confirm('Delete this entry?')) return;
+  let users = getUsers();
+  users[currentUser].entries.splice(i,1);
+  saveUsers(users);
+  loadEntries();
+}
+function deleteAll(){
+  if(!confirm('Delete ALL your entries? This cannot be undone.')) return;
+  let users = getUsers();
+  users[currentUser].entries = [];
+  saveUsers(users);
+  loadEntries();
+}
+</script>
+</body>
+</html>
